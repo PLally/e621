@@ -1,12 +1,13 @@
-package e621
+package e926
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
-	"fmt"
+	"time"
 )
 
 type JsonTime struct {
@@ -15,7 +16,7 @@ type JsonTime struct {
 	N         int
 }
 
-type E621Post struct {
+type Post struct {
 	ID            int      `json:"id"`
 	Tags          string   `json:"tags"`
 	LockedTags    string   `json:"locked_tags"`
@@ -50,23 +51,43 @@ type E621Post struct {
 	Sources       []string `json:"sources"`
 }
 
-type E621Session struct {
+type Session struct {
 	BaseURL   string
 	Username  string
 	UserAgent string
 	ApiKey    string
 	Client    *http.Client
+	waiting bool
+	waitTicker *time.Ticker
 }
 
-func (p *E621Post) PostURL() string {
-	return fmt.Sprintf("https://e621.net/post/show/%v", p.ID)
+// NewSession
+func NewSession(domain string, userAgent string) *Session {
+	return &Session{
+		UserAgent: userAgent,
+		Client: &http.Client{},
+		BaseURL: "https://"+domain,
+	}
 }
 
-func (e *E621Session) Get(url string, params map[string]string) (*http.Response, error) {
-	params["password_hash"] = e.ApiKey
-	params["login"] = e.Username
+func (s *Session) WaitBetweenRequests() {
+	s.waiting = true
+	s.waitTicker = time.NewTicker(time.Millisecond*500)
+}
 
-	req, err := http.NewRequest("GET", e.BaseURL+url, nil)
+func (s *Session) PostURL(p *Post) string {
+	return fmt.Sprintf(s.BaseURL+"/post/show/%v", p.ID)
+}
+
+func (s *Session) Get(url string, params map[string]string) (*http.Response, error) {
+	if s.waiting {
+		<- s.waitTicker.C
+	}
+	params["password_hash"] = s.ApiKey
+	params["login"] = s.Username
+
+	req, err := http.NewRequest("GET", s.BaseURL+url, nil)
+
 	if err != nil {
 		return nil, err
 	}
@@ -76,15 +97,17 @@ func (e *E621Session) Get(url string, params map[string]string) (*http.Response,
 	}
 	req.URL.RawQuery = q.Encode()
 
-	req.Header.Add("User-Agent", e.UserAgent)
-	return e.Client.Do(req)
+	req.Header.Add("User-Agent", s.UserAgent)
+
+	return s.Client.Do(req)
 }
 
-func (e *E621Session) GetPosts(tags []string, limit int) (posts []*E621Post) {
-	resp, err := e.Get("/post/index.json", map[string]string{
+func (s *Session) GetPosts(tags []string, limit int) (posts []*E621Post) {
+	resp, err := s.Get("/post/index.json", map[string]string{
 		"tags":  strings.Join(tags, " "),
 		"limit": strconv.Itoa(limit),
 	})
+
 	if err != nil {
 		return
 	}

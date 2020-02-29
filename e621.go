@@ -1,4 +1,4 @@
-package e926
+package e621
 
 import (
 	"encoding/json"

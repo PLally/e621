@@ -102,7 +102,7 @@ func (s *Session) Get(url string, params map[string]string) (*http.Response, err
 	return s.Client.Do(req)
 }
 
-func (s *Session) GetPosts(tags []string, limit int) (posts []*E621Post) {
+func (s *Session) GetPosts(tags []string, limit int) (posts []*Post) {
 	resp, err := s.Get("/post/index.json", map[string]string{
 		"tags":  strings.Join(tags, " "),
 		"limit": strconv.Itoa(limit),

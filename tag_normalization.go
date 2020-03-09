@@ -18,7 +18,7 @@ func (p ParsedTags) Normalized() string{
 	return strings.Join(p.NotTags, " ") + strings.Join(p.NormalTags, " " )+" "+strings.Join(p.OrTags, " ")
 }
 
-func (p ParsedTags) Matches(tags []string) bool {
+func (p ParsedTags) Matches(tags TagContainer) bool {
 	var orSatisfied bool
 
 	var satisfied = make(map[string]bool)
@@ -27,7 +27,7 @@ func (p ParsedTags) Matches(tags []string) bool {
 		satisfied[tag] = false
 	}
 
-	for _, tag := range tags {
+	for _, tag := range tags.All() {
 		if contains(p.NotTags, tag) {
 			return false
 		}

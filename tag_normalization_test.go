@@ -10,5 +10,6 @@ func TestParserTags(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	// TODO
 	fmt.Println(parsed.Normalized())
 }

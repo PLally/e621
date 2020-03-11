@@ -61,6 +61,7 @@ func ParseTags(tags string, allowWildcards bool) (ParsedTags, error) {
 	orTags := make([]string, 0)
 
 	for _, tag := range strings.Split(tags, " ") {
+		if tag == "" { continue }
 		if strings.Contains(tag,  "*") && allowWildcards == false {
 			return ParsedTags{}, ErrWildcardDisallowed
 		}

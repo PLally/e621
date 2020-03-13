@@ -2,6 +2,7 @@ package e621
 
 import (
 	"errors"
+	"sort"
 	"strings"
 )
 
@@ -15,7 +16,13 @@ type ParsedTags struct {
 
 // TODO sort tags
 func (p ParsedTags) Normalized() string{
-	return strings.Join(p.NotTags, " ") + strings.Join(p.NormalTags, " " )+" "+strings.Join(p.OrTags, " ")
+	tags := p.NotTags
+	tags  = append(tags, p.NormalTags...)
+	tags  = append(tags, p.OrTags...)
+	sort.Strings(tags)
+
+	out := strings.Join(tags, " ")
+	return out
 }
 
 func (p ParsedTags) Matches(tags TagContainer) bool {

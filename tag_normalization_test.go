@@ -4,18 +4,28 @@ import (
 	"testing"
 )
 
-func TestParserTags(t *testing.T) {
-	_, err := ParseTags("wolf fox male -female", false)
-	if err != nil {
-		t.Error(err)
+func TestParsedTags_Normalized(t *testing.T) {
+	testData := []struct{
+		in string
+		out string
+	}{
+		{"test", "test"},
+		{"a c b", "a b c"},
+		{"tag fox male -tag2", "-tag2 fox male tag"},
+		{"wolf ", "wolf"},
 	}
 
-	_, err = ParseTags("wolf ", false)
-	if err != nil {
-		t.Error(err)
+	for _, data := range testData {
+		parsed, err := ParseTags(data.in, false)
+		if err  != nil {
+			t.Error(err)
+		}
+		if parsed.Normalized() != data.out {
+			t.Errorf("Pared '%v' does not equal out '%v'", parsed.Normalized(), data.out)
+		}
 	}
+
 }
-
 func TestParsedTags_Matches(t *testing.T) {
 	parsed, err := ParseTags("singletag", false)
 	if err != nil {

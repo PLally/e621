@@ -58,13 +58,9 @@ func (s *Session) GetPosts(tags string, limit int) (posts PostsResponse, err err
 		"limit": strconv.Itoa(limit),
 	})
 
-	if err != nil {
-		return
-	}
+	if err != nil { return }
 	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
+	if err != nil { return }
 
 	err = json.Unmarshal(data, &posts)
 	return

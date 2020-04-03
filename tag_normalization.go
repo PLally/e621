@@ -14,7 +14,6 @@ type ParsedTags struct {
 	NormalTags []string
 }
 
-// TODO sort tags
 func (p ParsedTags) Normalized() string{
 	tags := p.NotTags
 	tags  = append(tags, p.NormalTags...)
@@ -27,7 +26,9 @@ func (p ParsedTags) Normalized() string{
 
 func (p ParsedTags) Matches(tags TagContainer) bool {
 	var orSatisfied bool
-
+	if len(p.OrTags) == 0 {
+		orSatisfied = true
+	}
 	var satisfied = make(map[string]bool)
 
 	for _, tag := range p.NormalTags {
@@ -35,7 +36,7 @@ func (p ParsedTags) Matches(tags TagContainer) bool {
 	}
 
 	for _, tag := range tags.All() {
-		if contains(p.NotTags, tag) {
+		if contains(p.NotTags, "-"+tag) {
 			return false
 		}
 
@@ -44,15 +45,19 @@ func (p ParsedTags) Matches(tags TagContainer) bool {
 			satisfied[tag] = true
 		}
 
-		if contains(p.OrTags, tag) {
+		if contains(p.OrTags, "~"+tag) {
+
 			orSatisfied = true
 		}
 	}
 
 	if !orSatisfied { return false }
 
+
 	for _, satisfied := range satisfied {
-		if !satisfied { return false }
+		if !satisfied {
+			return false
+		}
 	}
 
 	return true
@@ -93,11 +98,10 @@ func ParseTags(tags string, allowWildcards bool) (ParsedTags, error) {
 			return ParsedTags{}, ErrNegateExistingTag
 		}
 	}
-
 	return ParsedTags{
-		posTags,
-		notTags,
 		orTags,
+		notTags,
+		posTags,
 	}, nil
 }
 

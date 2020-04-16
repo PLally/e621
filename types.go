@@ -26,6 +26,7 @@ type TagContainer struct {
 	Lore      []string `json:"lore"`
 	Meta      []string `json:"meta"`
 }
+
 func (t *TagContainer) All() []string {
 	tags := t.General
 	tags = append(tags, t.Species...)
@@ -72,11 +73,26 @@ type Post struct {
 	Rating        string                `json:"rating"`
 	FavCount      int                   `json:"fav_count"`
 	Sources       []string              `json:"sources"`
-	Pools         []int                  `json:"pools"` // Is this type correct
+	Pools         []int                 `json:"pools"` // Is this type correct
 	Relationships RelationshipContainer `json:"relationships"`
 	ApproverID    int                   `json:"approver_id"`
 	UploaderID    int                   `json:"uploader_id"`
 	Description   string                `json:"description"`
 	CommentCount  int                   `json:"comment_count"`
 	IsFavorited   bool                  `json:"is_favorited"`
+}
+
+type TagAlias struct {
+	ID             int    `json:"id"`
+	AntecedentName string `json:"antecedent_name"`
+	Reason         string `json:"reason"`
+	CreatorID      int    `json:"creator_id"`
+	CreatedAt      string `json:"created_at"`
+	ForumPostID    int    `json:"forum_post_id"`
+	UpdatedAt      int    `json:"updated_at"`
+	ForumTopicID   int    `json:"forum_topic_id"`
+	ConsequentName string `json:"consequent_name"`
+	Status         string `json:"status"`
+	PostCount      int    `json:"post_count"`
+	ApproverID     int    `json:"approver_id"`
 }

@@ -14,4 +14,3 @@ func TestSession_GetPosts(t *testing.T) {
 		t.Fail()
 	}
 }
-

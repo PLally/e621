@@ -6,18 +6,16 @@ import (
 	"strings"
 )
 
-
-
 type ParsedTags struct {
-	OrTags []string
-	NotTags []string
+	OrTags     []string
+	NotTags    []string
 	NormalTags []string
 }
 
-func (p ParsedTags) Normalized() string{
+func (p ParsedTags) Normalized() string {
 	tags := p.NotTags
-	tags  = append(tags, p.NormalTags...)
-	tags  = append(tags, p.OrTags...)
+	tags = append(tags, p.NormalTags...)
+	tags = append(tags, p.OrTags...)
 	sort.Strings(tags)
 
 	out := strings.Join(tags, " ")
@@ -51,8 +49,9 @@ func (p ParsedTags) Matches(tags TagContainer) bool {
 		}
 	}
 
-	if !orSatisfied { return false }
-
+	if !orSatisfied {
+		return false
+	}
 
 	for _, satisfied := range satisfied {
 		if !satisfied {
@@ -73,8 +72,10 @@ func ParseTags(tags string, allowWildcards bool) (ParsedTags, error) {
 	orTags := make([]string, 0)
 
 	for _, tag := range strings.Split(tags, " ") {
-		if tag == "" { continue }
-		if strings.Contains(tag,  "*") && allowWildcards == false {
+		if tag == "" {
+			continue
+		}
+		if strings.Contains(tag, "*") && allowWildcards == false {
 			return ParsedTags{}, ErrWildcardDisallowed
 		}
 		if tag[0:1] == "--" { // tags with repeating 'not' modifiers have no effect on the query
@@ -84,10 +85,12 @@ func ParseTags(tags string, allowWildcards bool) (ParsedTags, error) {
 				notTags = append(notTags, tag)
 			}
 		} else if tag[0] == '~' {
-			if tag[1] == '~' { return ParsedTags{}, ErrNoResultQuery }
-			orTags =  append(orTags, tag)
+			if tag[1] == '~' {
+				return ParsedTags{}, ErrNoResultQuery
+			}
+			orTags = append(orTags, tag)
 
-		}  else {
+		} else {
 			posTags = append(posTags, tag)
 		}
 

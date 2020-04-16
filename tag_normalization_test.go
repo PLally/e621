@@ -5,8 +5,8 @@ import (
 )
 
 func TestParsedTags_Normalized(t *testing.T) {
-	testData := []struct{
-		in string
+	testData := []struct {
+		in  string
 		out string
 	}{
 		{"test", "test"},
@@ -17,7 +17,7 @@ func TestParsedTags_Normalized(t *testing.T) {
 
 	for _, data := range testData {
 		parsed, err := ParseTags(data.in, false)
-		if err  != nil {
+		if err != nil {
 			t.Error(err)
 		}
 		if parsed.Normalized() != data.out {
@@ -28,32 +28,29 @@ func TestParsedTags_Normalized(t *testing.T) {
 
 func TestParsedTags_Matches(t *testing.T) {
 
-	testdata := []struct{
-		parsed string
-		container TagContainer
+	testdata := []struct {
+		parsed      string
+		container   TagContainer
 		shouldMatch bool
 	}{
 		{"singletag", TagContainer{
-			General:   []string{"test", "test2"},
-			Artist:    []string{"singletag"},
-
+			General: []string{"test", "test2"},
+			Artist:  []string{"singletag"},
 		}, true},
 		{"~foo ~bar", TagContainer{
-			General:   []string{"test", "bar"},
-			Artist:    []string{"singletag"},
-
+			General: []string{"test", "bar"},
+			Artist:  []string{"singletag"},
 		}, true},
 		{"-help", TagContainer{
-			General:   []string{"help", "test2"},
+			General: []string{"help", "test2"},
 		}, false},
 		{"-help", TagContainer{
-			General:   []string{"help2", "test2"},
+			General: []string{"help2", "test2"},
 		}, true},
 	}
 
-
 	for _, data := range testdata {
-		parsed, err :=ParseTags(data.parsed, false)
+		parsed, err := ParseTags(data.parsed, false)
 		if err != nil {
 			t.Error(err)
 		}

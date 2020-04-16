@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 )
-const MAX_LIMIT = 320
 
+const MAX_LIMIT = 320
 
 type Session struct {
 	BaseURL   string
@@ -21,12 +21,12 @@ type Session struct {
 func NewSession(domain string, userAgent string) *Session {
 	return &Session{
 		UserAgent: userAgent,
-		Client: &http.Client{},
-		BaseURL: "https://"+domain,
+		Client:    &http.Client{},
+		BaseURL:   "https://" + domain,
 	}
 }
 func (s *Session) PostUrl(p *Post) string {
-	return "https://e621.net/posts/"+strconv.Itoa(p.ID)
+	return "https://e621.net/posts/" + strconv.Itoa(p.ID)
 }
 func (s *Session) Get(url string, params map[string]string) (*http.Response, error) {
 	params["password_hash"] = s.ApiKey
@@ -50,7 +50,7 @@ func (s *Session) Get(url string, params map[string]string) (*http.Response, err
 
 func (s *Session) GetPosts(tags string, limit int) (posts PostsResponse, err error) {
 	if limit > MAX_LIMIT {
-		panic("Limit must be bellow "+strconv.Itoa(MAX_LIMIT))
+		panic("Limit must be bellow " + strconv.Itoa(MAX_LIMIT))
 	}
 
 	resp, err := s.Get("/posts.json", map[string]string{
@@ -58,10 +58,31 @@ func (s *Session) GetPosts(tags string, limit int) (posts PostsResponse, err err
 		"limit": strconv.Itoa(limit),
 	})
 
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 
 	err = json.Unmarshal(data, &posts)
+	return
+}
+
+func (s *Session) FindAliases(name string) (aliases []TagAlias, err error) {
+	resp, err := s.Get("/tag_aliases.json", map[string]string{
+		"search[name_matches]": name,
+	})
+	if err != nil {
+		return
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(data, &aliases)
 	return
 }

@@ -96,3 +96,15 @@ type TagAlias struct {
 	PostCount      int    `json:"post_count"`
 	ApproverID     int    `json:"approver_id"`
 }
+
+type Tag struct {
+	ID                   int    `json:"id"`
+	Name                 string `json:"name"`
+	PostCount            int    `json:"post_count"`
+	RelatedTags          string `json:"related_tags"`
+	RelatedTagsUpdatedAt string `json:"related_tags_updated_at"`
+	Category             int    `json:"category"`
+	IsLocked             bool   `json:"is_locked"`
+	CreatedAt            string `json:"created_at"`
+	UpdatedAt            string `json:"updated_at"`
+}

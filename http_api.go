@@ -86,3 +86,21 @@ func (s *Session) FindAliases(name string) (aliases []TagAlias, err error) {
 	err = json.Unmarshal(data, &aliases)
 	return
 }
+
+
+func (s *Session) FindTag(name string) (tags []Tag, err error) {
+	resp, err := s.Get("tags.json", map[string]string{
+		"search[name_matches]": name,
+	})
+	if err != nil {
+		return
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(data, &tags)
+	return
+}

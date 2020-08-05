@@ -26,7 +26,7 @@ func NewSession(domain string, userAgent string) *Session {
 	}
 }
 func (s *Session) PostUrl(p *Post) string {
-	return "https://e621.net/posts/" + strconv.Itoa(p.ID)
+	return s.BaseURL+"/posts/" + strconv.Itoa(p.ID)
 }
 func (s *Session) Get(url string, params map[string]string) (*http.Response, error) {
 	params["password_hash"] = s.ApiKey
@@ -86,7 +86,6 @@ func (s *Session) FindAliases(name string) (aliases []TagAlias, err error) {
 	err = json.Unmarshal(data, &aliases)
 	return
 }
-
 
 func (s *Session) FindTag(name string) (tags []Tag, err error) {
 	resp, err := s.Get("/tags.json", map[string]string{

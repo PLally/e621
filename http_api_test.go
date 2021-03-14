@@ -17,7 +17,7 @@ func TestSession_GetPosts(t *testing.T) {
 }
 
 func TestSession_FindTag(t *testing.T) {
-	session := NewSession("e621.net", "e6_tests")
+	session := NewSession("e926.net", "e6_tests")
 	tags, err := session.FindTag("letodoesart")
 	if err != nil {
 		t.Error(err)

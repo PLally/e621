@@ -1,3 +1,3 @@
-module github.com/plally/e621
+module github.com/plally/e926
 
 go 1.14

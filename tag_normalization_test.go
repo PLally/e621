@@ -1,4 +1,4 @@
-package e621
+package e926
 
 import (
 	"testing"

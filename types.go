@@ -1,4 +1,4 @@
-package e621
+package e926
 
 type File struct {
 	Width  int    `json:"width"`
